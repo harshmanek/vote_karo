@@ -119,7 +119,7 @@ class _MyLoginState extends State<MyLogin> {
                             children: [
                               TextButton(
                                 onPressed: () {
-                                  Navigator.pushNamed(context, 'register');
+                                  Navigator.pushNamed(context, '/register');
                                 },
                                 style: const ButtonStyle(),
                                 child: const Text(
