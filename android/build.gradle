@@ -1,0 +1,47 @@
+buildscript {
+    ext.kotlin_version = '1.8.22' // Update to match the latest stable version
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+
+    dependencies {
+        classpath "com.android.tools.build:gradle:8.0.2" // Make sure this matches your AGP version
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+        // Other dependencies
+    }
+}
+plugins {
+    // ...
+
+    // Add the dependency for the Google services Gradle plugin
+    //noinspection GradleDependency
+    id 'com.google.gms.google-services' version '4.3.15' apply false
+
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+configurations.all {
+    resolutionStrategy {
+        force "org.jetbrains.kotlin:kotlin-stdlib:1.8.22"
+    }
+}
+
+
+rootProject.buildDir = "../build"
+subprojects {
+    project.buildDir = "${rootProject.buildDir}/${project.name}"
+}
+subprojects {
+    project.evaluationDependsOn(":app")
+}
+
+tasks.register("clean", Delete) {
+    delete rootProject.buildDir
+}
