@@ -44,7 +44,16 @@ class _MyLoginState extends State<MyLogin> {
               padding: const EdgeInsets.only(left: 45, top: 200),
               child: const Text(
                 'BallotBox',
-                style: TextStyle(color: Color.fromRGBO(59, 47, 15, 1), fontSize: 33,fontWeight: FontWeight.bold,shadows:<Shadow>[Shadow(color: Color.fromRGBO(121, 200, 93, 0.4),blurRadius: 4.0,offset:Offset(6.0,2.0))]),
+                style: TextStyle(
+                    color: Color.fromRGBO(59, 47, 15, 1),
+                    fontSize: 33,
+                    fontWeight: FontWeight.bold,
+                    shadows: <Shadow>[
+                      Shadow(
+                          color: Color.fromRGBO(121, 200, 93, 0.4),
+                          blurRadius: 4.0,
+                          offset: Offset(6.0, 2.0))
+                    ]),
               ),
             ),
             SingleChildScrollView(
@@ -92,22 +101,23 @@ class _MyLoginState extends State<MyLogin> {
                             children: [
                               Center(
                                 child: ElevatedButton(
-                                onPressed: (){
-                                  Navigator.pushNamed(context, "routeName");
-                                },
-
-                                style: ElevatedButton.styleFrom(
-
-                                  backgroundColor: Colors.lightBlue,
-                                  padding:const EdgeInsets.symmetric(horizontal:125,vertical: 15),
-                                  shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0),
-                                  ),
-                                ),
-                                child:const Text('Login',
-                                style:TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 20,
-                                ))),
+                                    onPressed: () {
+                                      Navigator.pushNamed(context, "/home");
+                                    },
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: Colors.lightBlue,
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 125, vertical: 15),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius:
+                                            BorderRadius.circular(10.0),
+                                      ),
+                                    ),
+                                    child: const Text('Login',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 20,
+                                        ))),
                               )
                             ],
                           ),
@@ -115,36 +125,48 @@ class _MyLoginState extends State<MyLogin> {
                             height: 40,
                           ),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
-                              TextButton(
+                              ElevatedButton(
                                 onPressed: () {
-                                  Navigator.pushNamed(context, '/register');
+                                  Navigator.pushNamed(context, "/register");
                                 },
-                                style: const ButtonStyle(),
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size(20,14),
+                                  backgroundColor: Colors.blue,
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 25, vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10),
+                                  ),
+                                ),
                                 child: const Text(
-                                  'Sign Up',
-                                  textAlign: TextAlign.left,
+                                  "Sign Up",
                                   style: TextStyle(
-                                      decoration: TextDecoration.underline,
-                                      color: Color(0xff4c505b),
-                                      fontSize: 18),
+                                    color: Colors.white,
+                                    fontSize: 15,
+                                  ),
                                 ),
                               ),
-                              TextButton(
-                                  onPressed: () {
-                                    // Navigate to Forgot Password page
-                                  },
-                                  child: const Text(
-                                    'Forgot Password',
-                                    style: TextStyle(
-                                      decoration: TextDecoration.underline,
-                                      color: Color(0xff4c505b),
-                                      fontSize: 18,
-                                    ),
-                                  )),
+                              ElevatedButton(
+                                onPressed: () {
+                                  Navigator.pushNamed(context, "routeName");
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  minimumSize: const Size(20,14),
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 20, vertical: 12),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(7),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Forgot Password',
+                                  style: TextStyle(fontSize: 15),
+                                ),
+                              )
                             ],
-                          )
+                          ),
                         ],
                       ),
                     )
