@@ -27,7 +27,7 @@ class _MyRegisterState extends State<MyRegister> {
       }
 
       // Registration successful, navigate to the login screen or home screen
-      Navigator.pushNamed(context, 'login');
+      Navigator.pushNamed(context, '/login');
     } on FirebaseAuthException catch (e) {
       // Handle registration errors here
       String message = '';
@@ -193,7 +193,7 @@ class _MyRegisterState extends State<MyRegister> {
                             children: [
                               TextButton(
                                 onPressed: () {
-                                  Navigator.pushNamed(context, 'login');
+                                  Navigator.pushNamed(context, '/login');
                                 },
                                 style: const ButtonStyle(),
                                 child: const Text(
