@@ -5,6 +5,10 @@ import 'package:flutter/material.dart';
 import 'package:vote_karo/firebase_options.dart';
 import 'package:vote_karo/login.dart';
 import 'package:vote_karo/register.dart';
+import 'vote.dart';
+import 'Admin.dart';
+import 'results_screen.dart';
+
 import 'package:vote_karo/initial_page.dart';
 
 // import 'package:vote_karo/login.dart';
@@ -16,6 +20,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   runApp(const MyApp());
+
 }
 
 class MyApp extends StatelessWidget {
@@ -30,7 +35,7 @@ class MyApp extends StatelessWidget {
         '/': (context) => const InitialPage(),
         '/login': (context) => const MyLogin(),
         '/register': (context) => const MyRegister(),
-        '/home':(context) => const MyHome(),
+        '/home':(context) => const VotingScreen()
       },
       onUnknownRoute: (settings) {
         return MaterialPageRoute(builder: (context) => NotFoundPage());
