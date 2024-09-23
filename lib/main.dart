@@ -1,5 +1,4 @@
 import 'dart:ffi';
-
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:vote_karo/firebase_options.dart';
@@ -8,19 +7,19 @@ import 'package:vote_karo/register.dart';
 import 'vote.dart';
 import 'Admin.dart';
 import 'results_screen.dart';
-
 import 'package:vote_karo/initial_page.dart';
-
-// import 'package:vote_karo/login.dart';
-// import 'package:vote_karo/register.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  } catch (e) {
+    // Handle error here (e.g., log the error, show an alert)
+    print("Firebase initialization error: $e");
+  }
   runApp(const MyApp());
-
 }
 
 class MyApp extends StatelessWidget {
@@ -35,20 +34,29 @@ class MyApp extends StatelessWidget {
         '/': (context) => const InitialPage(),
         '/login': (context) => const MyLogin(),
         '/register': (context) => const MyRegister(),
-        '/home':(context) => const VotingScreen()
+        '/home': (context) => const VotingScreen(),
       },
       onUnknownRoute: (settings) {
-        return MaterialPageRoute(builder: (context) => NotFoundPage());
+        return MaterialPageRoute(builder: (context) => const NotFoundPage());
       },
     );
   }
 }
 
 class NotFoundPage extends StatelessWidget {
+  const NotFoundPage({super.key});
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    throw UnimplementedError();
+    return Scaffold(
+      appBar: AppBar(title: const Text('404 - Not Found')),
+      body: Center(
+        child: const Text(
+          'Page not found!',
+          style: TextStyle(fontSize: 24),
+        ),
+      ),
+    );
   }
 }
 
@@ -64,10 +72,8 @@ class InitialPage extends StatelessWidget {
           decoration: const BoxDecoration(
             gradient: LinearGradient(
               colors: [Colors.white70, Colors.lightBlueAccent],
-              // Start and end colors of the gradient
               begin: Alignment.topLeft,
-              // Starting point of the gradient
-              end: Alignment.bottomRight, // Ending point of the gradient
+              end: Alignment.bottomRight,
             ),
           ),
           child: Column(
@@ -128,8 +134,7 @@ class InitialPage extends StatelessWidget {
                       Navigator.pushNamed(context, '/login');
                     },
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 105, vertical: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 105, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25.0),
                       ),
@@ -142,8 +147,7 @@ class InitialPage extends StatelessWidget {
                       Navigator.pushNamed(context, '/register');
                     },
                     style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 95, vertical: 15),
+                      padding: const EdgeInsets.symmetric(horizontal: 95, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25.0),
                       ),

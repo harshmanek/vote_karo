@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -7,7 +6,7 @@ class MyLogin extends StatefulWidget {
   const MyLogin({super.key});
 
   @override
-  _MyLoginState createState()  => _MyLoginState();
+  _MyLoginState createState() => _MyLoginState();
 }
 
 class _MyLoginState extends State<MyLogin> {
@@ -22,9 +21,15 @@ class _MyLoginState extends State<MyLogin> {
         password: _passwordController.text.trim(),
       );
       // Navigate to your home page or dashboard
+      Navigator.pushNamed(context, "/home");
     } catch (e) {
-      // Handle errors
-      print(e);
+      // Show an error message to the user
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Login failed: ${e.toString()}'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
@@ -33,7 +38,9 @@ class _MyLoginState extends State<MyLogin> {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
-            image: AssetImage('assets/home1.jpg'), fit: BoxFit.fitWidth),
+          image: AssetImage('assets/home1.jpg'),
+          fit: BoxFit.fitWidth,
+        ),
       ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
@@ -45,21 +52,24 @@ class _MyLoginState extends State<MyLogin> {
               child: const Text(
                 'BallotBox',
                 style: TextStyle(
-                    color: Color.fromRGBO(59, 47, 15, 1),
-                    fontSize: 33,
-                    fontWeight: FontWeight.bold,
-                    shadows: <Shadow>[
-                      Shadow(
-                          color: Color.fromRGBO(121, 200, 93, 0.4),
-                          blurRadius: 4.0,
-                          offset: Offset(6.0, 2.0))
-                    ]),
+                  color: Color.fromRGBO(59, 47, 15, 1),
+                  fontSize: 33,
+                  fontWeight: FontWeight.bold,
+                  shadows: <Shadow>[
+                    Shadow(
+                      color: Color.fromRGBO(121, 200, 93, 0.4),
+                      blurRadius: 4.0,
+                      offset: Offset(6.0, 2.0),
+                    ),
+                  ],
+                ),
               ),
             ),
             SingleChildScrollView(
               child: Container(
                 padding: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height * 0.5),
+                  top: MediaQuery.of(context).size.height * 0.5,
+                ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -71,59 +81,59 @@ class _MyLoginState extends State<MyLogin> {
                             controller: _emailController,
                             style: const TextStyle(color: Colors.black),
                             decoration: InputDecoration(
-                                fillColor: Colors.grey.shade100,
-                                filled: true,
-                                hintText: "Email",
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                )),
+                              fillColor: Colors.grey.shade100,
+                              filled: true,
+                              hintText: "Email",
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
                           ),
-                          const SizedBox(
-                            height: 30,
-                          ),
+                          const SizedBox(height: 30),
                           TextField(
                             controller: _passwordController,
                             style: const TextStyle(),
                             obscureText: true,
                             decoration: InputDecoration(
-                                fillColor: Colors.grey.shade100,
-                                filled: true,
-                                hintText: "Password",
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10),
-                                )),
+                              fillColor: Colors.grey.shade100,
+                              filled: true,
+                              hintText: "Password",
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
                           ),
-                          const SizedBox(
-                            height: 40,
-                          ),
+                          const SizedBox(height: 40),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceAround,
                             children: [
                               Center(
                                 child: ElevatedButton(
-                                    onPressed: () {
-                                      Navigator.pushNamed(context, "/home");
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.lightBlue,
-                                      padding: const EdgeInsets.symmetric(
-                                          horizontal: 125, vertical: 15),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(10.0),
-                                      ),
+                                  onPressed: () {
+                                    signIn(); // Call signIn method here
+                                  },
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.lightBlue,
+                                    padding: const EdgeInsets.symmetric(
+                                      horizontal: 125,
+                                      vertical: 15,
                                     ),
-                                    child: const Text('Login',
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 20,
-                                        ))),
-                              )
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10.0),
+                                    ),
+                                  ),
+                                  child: const Text(
+                                    'Login',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 20,
+                                    ),
+                                  ),
+                                ),
+                              ),
                             ],
                           ),
-                          const SizedBox(
-                            height: 40,
-                          ),
+                          const SizedBox(height: 40),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -132,10 +142,12 @@ class _MyLoginState extends State<MyLogin> {
                                   Navigator.pushNamed(context, "/register");
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  minimumSize: const Size(20,14),
+                                  minimumSize: const Size(20, 14),
                                   backgroundColor: Colors.blue,
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 25, vertical: 12),
+                                    horizontal: 25,
+                                    vertical: 12,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
                                   ),
@@ -153,9 +165,11 @@ class _MyLoginState extends State<MyLogin> {
                                   Navigator.pushNamed(context, "routeName");
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  minimumSize: const Size(20,14),
+                                  minimumSize: const Size(20, 14),
                                   padding: const EdgeInsets.symmetric(
-                                      horizontal: 20, vertical: 12),
+                                    horizontal: 20,
+                                    vertical: 12,
+                                  ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(7),
                                   ),
@@ -164,12 +178,12 @@ class _MyLoginState extends State<MyLogin> {
                                   'Forgot Password',
                                   style: TextStyle(fontSize: 15),
                                 ),
-                              )
+                              ),
                             ],
                           ),
                         ],
                       ),
-                    )
+                    ),
                   ],
                 ),
               ),
