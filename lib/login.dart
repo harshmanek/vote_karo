@@ -16,17 +16,32 @@ class _MyLoginState extends State<MyLogin> {
 
   Future<void> signIn() async {
     try {
+      // Attempt to sign in the user
       UserCredential userCredential = await _auth.signInWithEmailAndPassword(
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      // Navigate to your home page or dashboard
+      // Navigate to the home page
       Navigator.pushNamed(context, "/home");
     } catch (e) {
-      // Show an error message to the user
+      // Handle specific errors for better user feedback
+      String errorMessage = 'Login failed. Please check your credentials.';
+      if (e is FirebaseAuthException) {
+        switch (e.code) {
+          case 'user-not-found':
+            errorMessage = 'No user found for that email.';
+            break;
+          case 'wrong-password':
+            errorMessage = 'Wrong password provided.';
+            break;
+          default:
+            errorMessage = 'An unexpected error occurred.';
+        }
+      }
+      // Show the error message to the user
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Login failed: ${e.toString()}'),
+          content: Text(errorMessage),
           backgroundColor: Colors.red,
         ),
       );
@@ -74,9 +89,10 @@ class _MyLoginState extends State<MyLogin> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Container(
-                      margin: const EdgeInsets.only(left: 35, right: 35),
+                      margin: const EdgeInsets.symmetric(horizontal: 35),
                       child: Column(
                         children: [
+                          // Email TextField
                           TextField(
                             controller: _emailController,
                             style: const TextStyle(color: Colors.black),
@@ -90,9 +106,10 @@ class _MyLoginState extends State<MyLogin> {
                             ),
                           ),
                           const SizedBox(height: 30),
+
+                          // Password TextField
                           TextField(
                             controller: _passwordController,
-                            style: const TextStyle(),
                             obscureText: true,
                             decoration: InputDecoration(
                               fillColor: Colors.grey.shade100,
@@ -104,36 +121,36 @@ class _MyLoginState extends State<MyLogin> {
                             ),
                           ),
                           const SizedBox(height: 40),
+
+                          // Login Button
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceAround,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Center(
-                                child: ElevatedButton(
-                                  onPressed: () {
-                                    signIn(); // Call signIn method here
-                                  },
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.lightBlue,
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 125,
-                                      vertical: 15,
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(10.0),
-                                    ),
+                              ElevatedButton(
+                                onPressed: signIn,
+                                style: ElevatedButton.styleFrom(
+                                  backgroundColor: Colors.lightBlue,
+                                  padding: const EdgeInsets.symmetric(
+                                    horizontal: 125,
+                                    vertical: 15,
                                   ),
-                                  child: const Text(
-                                    'Login',
-                                    style: TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 20,
-                                    ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0),
+                                  ),
+                                ),
+                                child: const Text(
+                                  'Login',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 20,
                                   ),
                                 ),
                               ),
                             ],
                           ),
                           const SizedBox(height: 40),
+
+                          // Sign Up and Forgot Password Buttons
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                             children: [
@@ -162,10 +179,11 @@ class _MyLoginState extends State<MyLogin> {
                               ),
                               ElevatedButton(
                                 onPressed: () {
-                                  Navigator.pushNamed(context, "routeName");
+                                  Navigator.pushNamed(context, '/forgot_password');
                                 },
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: const Size(20, 14),
+                                  backgroundColor: Colors.blue,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 20,
                                     vertical: 12,
@@ -176,7 +194,7 @@ class _MyLoginState extends State<MyLogin> {
                                 ),
                                 child: const Text(
                                   'Forgot Password',
-                                  style: TextStyle(fontSize: 15),
+                                  style: TextStyle(color: Colors.white, fontSize: 15),
                                 ),
                               ),
                             ],

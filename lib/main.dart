@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:vote_karo/firebase_options.dart';
 import 'package:vote_karo/login.dart';
 import 'package:vote_karo/register.dart';
+
+import 'forgot_password.dart';
 import 'vote.dart';
 import 'Admin.dart';
 import 'results_screen.dart';
@@ -35,6 +37,8 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const MyLogin(),
         '/register': (context) => const MyRegister(),
         '/home': (context) => const VotingScreen(),
+        '/forgot_password': (context) => const ForgotPassword(),
+
       },
       onUnknownRoute: (settings) {
         return MaterialPageRoute(builder: (context) => const NotFoundPage());
@@ -42,6 +46,8 @@ class MyApp extends StatelessWidget {
     );
   }
 }
+
+
 
 class NotFoundPage extends StatelessWidget {
   const NotFoundPage({super.key});
