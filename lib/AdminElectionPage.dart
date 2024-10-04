@@ -3,7 +3,7 @@ import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import 'election.dart';
 import 'candidate.dart';
 import 'party.dart';
-import 'package:intl/intl.dart';
+// import 'package:intl/intl.dart';
 
 class AdminElectionPage extends StatefulWidget {
   const AdminElectionPage({super.key});

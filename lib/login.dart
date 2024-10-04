@@ -3,10 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import 'package:vote_karo/AdminDashboard.dart';
-import 'party.dart';
+// import 'party.dart';
 import 'election_page.dart'; // Your new ElectionsPage with OOP logic
 import 'election.dart'; // Assuming your Election model is here
-import 'candidate.dart'; // Assuming your Candidate model is here
+// import 'candidate.dart'; // Assuming your Candidate model is here
 
 class MyLogin extends StatefulWidget {
   const MyLogin({super.key});

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'firestore_service.dart'; // Ensure FirestoreService is imported
 import 'election.dart'; // Ensure Election and related models are imported
 import 'initial_page.dart';
-import 'vote.dart'; // Ensure VotingScreen is imported
+// import 'vote.dart'; // Ensure VotingScreen is imported
 
 class CandidatesPage extends StatefulWidget {
   final String electionId; // Accept the Election ID from Firestore

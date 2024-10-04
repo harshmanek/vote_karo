@@ -18,9 +18,8 @@ class Result {
   void showResults() {
     candidateVotes.forEach((candidate, votes) {
       print(
-        '${candidate.name ?? 'Unknown Candidate'} '
-            '(${candidate.party.name ??
-            'Unknown Party'}) received $votes votes.',
+        '${candidate.name} '
+            '(${candidate.party.name}) received $votes votes.',
       );
     });
   }

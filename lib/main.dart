@@ -1,4 +1,4 @@
-import 'dart:ffi';
+// import 'dart:ffi';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:vote_karo/AdminElectionPage.dart';
@@ -6,10 +6,10 @@ import 'package:vote_karo/firebase_options.dart';
 import 'package:vote_karo/login.dart';
 import 'package:vote_karo/register.dart';
 import 'forgot_password.dart';
-import 'vote.dart';
-import 'Admin.dart'; // Ensure this is correct
-import 'results_screen.dart';
-import 'package:vote_karo/initial_page.dart';
+// import 'vote.dart';
+// import 'Admin.dart'; // Ensure this is correct
+// import 'results_screen.dart';
+// import 'package:vote_karo/initial_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
