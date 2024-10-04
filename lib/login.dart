@@ -1,6 +1,12 @@
 import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
+import 'package:vote_karo/AdminDashboard.dart';
+import 'party.dart';
+import 'election_page.dart'; // Your new ElectionsPage with OOP logic
+import 'election.dart'; // Assuming your Election model is here
+import 'candidate.dart'; // Assuming your Candidate model is here
 
 class MyLogin extends StatefulWidget {
   const MyLogin({super.key});
@@ -14,6 +20,29 @@ class _MyLoginState extends State<MyLogin> {
   final TextEditingController _passwordController = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // Firestore instance
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  Future<List<Election>> _loadElections() async {
+    List<Election> elections = [];
+    try {
+      // Fetch elections from Firestore
+      QuerySnapshot snapshot = await _firestore.collection('elections').get();
+      for (var doc in snapshot.docs) {
+        elections
+            .add(Election.fromFirestore(doc)); // Use your fromFirestore method
+      }
+      if (elections.isEmpty) {
+        print("No elections found.");
+      } else {
+        print("${elections.length} elections found.");
+      }
+    } catch (e) {
+      print("Error fetching elections: $e");
+    }
+    return elections;
+  }
+
   Future<void> signIn() async {
     try {
       // Attempt to sign in the user
@@ -21,8 +50,40 @@ class _MyLoginState extends State<MyLogin> {
         email: _emailController.text.trim(),
         password: _passwordController.text.trim(),
       );
-      // Navigate to the home page
-      Navigator.pushNamed(context, "/home");
+
+      // Fetch the user data from Firestore
+      DocumentSnapshot userDoc = await _firestore
+          .collection('users')
+          .doc(userCredential.user!.uid) // Assuming user ID is the document ID
+          .get();
+
+      if (userDoc.exists) {
+        // Check if the user is an admin
+        bool isAdmin = userDoc['isAdmin'] ?? false;
+
+        // Fetch the available elections from Firestore
+
+        if (isAdmin) {
+          // If the user is an admin, redirect to the Admin Page
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const AdminDashboard(), // AdminPage
+            ),
+          );
+        } else {
+          // Otherwise, redirect to the ElectionsPage for regular users
+          List<Election> elections = await _loadElections();
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => ElectionsPage(elections: elections),
+            ),
+          );
+        }
+      } else {
+        throw Exception('User document not found.');
+      }
     } catch (e) {
       // Handle specific errors for better user feedback
       String errorMessage = 'Login failed. Please check your credentials.';
@@ -179,7 +240,8 @@ class _MyLoginState extends State<MyLogin> {
                               ),
                               ElevatedButton(
                                 onPressed: () {
-                                  Navigator.pushNamed(context, '/forgot_password');
+                                  Navigator.pushNamed(
+                                      context, '/forgot_password');
                                 },
                                 style: ElevatedButton.styleFrom(
                                   minimumSize: const Size(20, 14),
@@ -194,7 +256,8 @@ class _MyLoginState extends State<MyLogin> {
                                 ),
                                 child: const Text(
                                   'Forgot Password',
-                                  style: TextStyle(color: Colors.white, fontSize: 15),
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 15),
                                 ),
                               ),
                             ],

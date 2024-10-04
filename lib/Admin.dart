@@ -23,7 +23,10 @@ class _AdminScreenState extends State<AdminScreen> {
       return; // Option name cannot be empty
     }
     setState(() {
-      _votes.add(Vote(option: optionText, icon: Icons.info, count: 0)); // Default icon and count
+      _votes.add(Vote(
+          option: optionText,
+          icon: Icons.info,
+          count: 0)); // Default icon and count
     });
     _optionController.clear();
     Navigator.of(context).pop(); // Close the dialog

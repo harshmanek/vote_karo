@@ -85,5 +85,4 @@ class DefaultFirebaseOptions {
     storageBucket: 'votingapp-d1e4f.appspot.com',
     measurementId: 'G-FPJYNCSSS7',
   );
-
 }

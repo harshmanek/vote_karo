@@ -1,13 +1,13 @@
 import 'dart:ffi';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:vote_karo/AdminElectionPage.dart';
 import 'package:vote_karo/firebase_options.dart';
 import 'package:vote_karo/login.dart';
 import 'package:vote_karo/register.dart';
-
 import 'forgot_password.dart';
 import 'vote.dart';
-import 'Admin.dart';
+import 'Admin.dart'; // Ensure this is correct
 import 'results_screen.dart';
 import 'package:vote_karo/initial_page.dart';
 
@@ -18,8 +18,8 @@ void main() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
   } catch (e) {
-    // Handle error here (e.g., log the error, show an alert)
     print("Firebase initialization error: $e");
+    // Optionally show an alert or redirect to an error page
   }
   runApp(const MyApp());
 }
@@ -36,9 +36,10 @@ class MyApp extends StatelessWidget {
         '/': (context) => const InitialPage(),
         '/login': (context) => const MyLogin(),
         '/register': (context) => const MyRegister(),
-        '/home': (context) => const VotingScreen(),
+        '/home': (context) => const InitialPage(),
         '/forgot_password': (context) => const ForgotPassword(),
-
+        '/adminElection': (context) =>
+            const AdminElectionPage(), // Add this line
       },
       onUnknownRoute: (settings) {
         return MaterialPageRoute(builder: (context) => const NotFoundPage());
@@ -46,8 +47,6 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
-
 
 class NotFoundPage extends StatelessWidget {
   const NotFoundPage({super.key});
@@ -140,7 +139,8 @@ class InitialPage extends StatelessWidget {
                       Navigator.pushNamed(context, '/login');
                     },
                     style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 105, vertical: 15),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 105, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25.0),
                       ),
@@ -153,7 +153,8 @@ class InitialPage extends StatelessWidget {
                       Navigator.pushNamed(context, '/register');
                     },
                     style: OutlinedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(horizontal: 95, vertical: 15),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 95, vertical: 15),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(25.0),
                       ),
