@@ -21,7 +21,7 @@ class Candidate {
   factory Candidate.fromFirestore(Map<String, dynamic> json) {
     // Ensure the json map has the correct keys and handle null values
     return Candidate(
-      id: json['id'] as String? ?? '', // Default to empty string if id is null
+      id: json['id'] as String? ?? uuid.v4(), // Default to empty string if id is null
       name: json['name'] as String? ?? 'No name', // Default to 'No name' if missing
       party: json['party'] != null
           ? Party.fromFirestore(json['party'] as Map<String, dynamic>)

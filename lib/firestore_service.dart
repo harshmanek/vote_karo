@@ -21,21 +21,29 @@ class FirestoreService {
         // Get the list of candidates and find the candidate to update
         List<dynamic> candidates =
             (snapshot.data() as Map<String, dynamic>)['candidates'] ?? [];
-        for (var candidate in candidates) {
-          if (candidate['id'] == candidateId) {
-            // Increment the vote count
-            candidate['voteCount'] = (candidate['voteCount'] ?? 0) + 1;
 
-            // Update the candidates array in Firestore
-            transaction.update(electionDoc, {'candidates': candidates});
-            break;
-          }
+        int candidateIndex = candidates.indexWhere((candidate) => candidate['id'] == candidateId);
+
+        if (candidateIndex == -1) {
+          throw Exception("Candidate not found!");
         }
+
+        // Increment the vote count manually
+        int currentVotes = candidates[candidateIndex]['voteCount'] ?? 0;
+        candidates[candidateIndex]['voteCount'] = currentVotes + 1;
+
+        // Update the candidates array in Firestore
+        transaction.update(electionDoc, {
+          'candidates': candidates,
+        });
       });
+
+      print('Vote recorded successfully!');
     } catch (e) {
       print('Error voting for candidate: $e');
     }
   }
+
 
   // Method to add election to Firestore
   Future<void> addElection(Election election) async {

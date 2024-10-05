@@ -40,16 +40,20 @@ class _VotingScreenState extends State<VotingScreen> {
   Future<void> _vote(Candidate candidate) async {
     final User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('You need to be logged in to vote.')),
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('You need to be logged in to vote.')),
+        );
+      });
       return;
     }
 
     if (_votedUsers.contains(user.uid)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('You have already voted.')),
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('You have already voted.')),
+        );
+      });
       return;
     }
 
@@ -74,35 +78,57 @@ class _VotingScreenState extends State<VotingScreen> {
                 Navigator.of(context).pop();
 
                 try {
-                  // Update the candidate's vote count in Firestore
-                  await FirebaseFirestore.instance
+                  final DocumentSnapshot electionDoc = await FirebaseFirestore
+                      .instance
                       .collection('elections')
                       .doc(widget.election.id)
-                      .update({
-                    'candidates': FieldValue.arrayUnion([
-                      {
-                        'id': candidate.id,
-                        'voteCount': FieldValue.increment(1),
-                      }
-                    ]),
-                    'votedUsers': FieldValue.arrayUnion([user.uid]),
-                  });
+                      .get();
+                  final List<dynamic> candidates = electionDoc['candidates'];
+                  int candidateIndex =
+                      candidates.indexWhere((c) => c['id'] == candidate.id);
 
-                  // Locally update the UI and add the user to the voted list
-                  setState(() {
-                    candidate.voteCount++; // Local increment
-                    _votedUsers.add(user.uid); // Mark this user as voted
-                  });
+                  if (candidateIndex != -1) {
+                    final int currentVotes =
+                        candidates[candidateIndex]['voteCount'] ?? 0;
 
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                        content: Text(
-                            'You voted for ${candidate.name} from ${candidate.party.name}!')),
-                  );
+                    candidates[candidateIndex]['voteCount'] = currentVotes + 1;
+                    await FirebaseFirestore.instance
+                        .collection('elections')
+                        .doc(widget.election.id)
+                        .update({
+                      'candidates': candidates,
+                      'votedUsers': FieldValue.arrayUnion([user.uid]),
+                    });
+
+                    // Locally update the UI and add the user to the voted list
+                    setState(() {
+                      candidate.voteCount++; // Local increment
+                      _votedUsers.add(user.uid); // Mark this user as voted
+                    });
+
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text(
+                                'You voted for ${candidate.name} from ${candidate.party.name}!')),
+                      );
+                    });
+                  } else {
+                    WidgetsBinding.instance.addPostFrameCallback((_){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Candidate not found!')),
+                      );
+                    });
+                  }
+                  // Update the candidate's vote count in Firestore
                 } catch (e) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text('Error voting: $e')),
-                  );
+                  print('Error voting: $e');
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('An error occurred. Please try again.')),
+                    );
+                  });
                 }
               },
             ),
@@ -118,7 +144,7 @@ class _VotingScreenState extends State<VotingScreen> {
       MaterialPageRoute(
         builder: (context) => ResultsScreen(
           election: widget.election,
-          electionId: '',
+          electionId: widget.election.id,
         ),
       ),
     );

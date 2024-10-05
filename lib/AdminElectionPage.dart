@@ -62,7 +62,6 @@ class _AdminElectionPageState extends State<AdminElectionPage> {
   }
 
   void _addCandidateToElection(Election election) {
-    // Show a dialog to add candidate information
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -106,24 +105,20 @@ class _AdminElectionPageState extends State<AdminElectionPage> {
                     _selectedParty != null) {
                   final newCandidate = Candidate(
                     name: _candidateNameController.text,
-                    party: _selectedParty!, id: '',
+                    party: _selectedParty!,
                   );
 
-                  // Update Firestore to add this candidate
                   _firestore.collection('elections').doc(election.id).update({
-                    'candidates':
-                        FieldValue.arrayUnion([newCandidate.toFirestore()])
+                    'candidates': FieldValue.arrayUnion([newCandidate.toFirestore()])
                   }).then((_) {
                     setState(() {
-                      election
-                          .addCandidate(newCandidate); // Add candidate locally
+                      election.addCandidate(newCandidate);
                     });
                   });
 
-                  // Clear inputs
                   _candidateNameController.clear();
                   _selectedParty = null;
-                  Navigator.of(context).pop(); // Close the dialog
+                  Navigator.of(context).pop();
                 }
               },
             ),
