@@ -38,6 +38,9 @@ dependencies:
   cupertino_icons: ^1.0.6
   firebase_core: ^3.3.0
   firebase_auth: ^5.1.4
+  cloud_firestore: ^5.4.4
+  intl: ^0.19.0
+  uuid: ^4.5.1
 
 dev_dependencies:
   flutter_test:
@@ -95,3 +98,9 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/custom-fonts/#from-packages
+  fonts:
+    - family: Oswald
+      fonts:
+        - asset: assets/fonts/Oswald-Regular.ttf
+        - asset: assets/fonts/Oswald-SemiBold.ttf
+          style: italic

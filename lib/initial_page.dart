@@ -1,22 +1,20 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'vote.dart';
-import 'results_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'candidate.dart';
+import 'election.dart'; // Import your Election, Candidate, and Party classes
+import 'results_screen.dart';
 
 class VotingScreen extends StatefulWidget {
-  const VotingScreen({super.key});
+  final Election election;
+
+  const VotingScreen({super.key, required this.election});
 
   @override
   _VotingScreenState createState() => _VotingScreenState();
 }
 
 class _VotingScreenState extends State<VotingScreen> {
-  final List<Vote> _votes = [
-    Vote(option: 'BJP', icon: Icons.thumb_up),       // BJP icon
-    Vote(option: 'Congress', icon: Icons.thumb_down), // Congress icon
-    Vote(option: 'Aam Aadmi Party', icon: Icons.star), // Example additional option
-  ];
-
   Set<String> _votedUsers = {};
 
   @override
@@ -25,49 +23,113 @@ class _VotingScreenState extends State<VotingScreen> {
     _loadVotedUsers();
   }
 
-  void _loadVotedUsers() async {
-    // Fetch the list of voted users from your storage or backend
+  // Check if the user has already voted by checking Firestore
+  Future<void> _loadVotedUsers() async {
+    final DocumentSnapshot doc = await FirebaseFirestore.instance
+        .collection('elections')
+        .doc(widget.election.id)
+        .get();
+
+    if (doc.exists) {
+      final data = doc.data() as Map<String, dynamic>;
+      _votedUsers = Set<String>.from(data['votedUsers'] ?? []);
+    }
   }
 
-  void _vote(int index) async {
+  // Update Firestore when a user votes
+  Future<void> _vote(Candidate candidate) async {
     final User? user = FirebaseAuth.instance.currentUser;
     if (user == null) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('You need to be logged in to vote.')),
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('You need to be logged in to vote.')),
+        );
+      });
       return;
     }
 
     if (_votedUsers.contains(user.uid)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('You have already voted.')),
-      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('You have already voted.')),
+        );
+      });
       return;
     }
 
+    // Confirmation dialog
     showDialog(
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Confirm Vote'),
-          content: Text('Are you sure you want to vote for "${_votes[index].option}"?'),
+          title: const Text('Confirm Vote'),
+          content: Text(
+              'Are you sure you want to vote for ${candidate.name} from ${candidate.party.name}?'),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Yes'),
+              child: const Text('Yes'),
               onPressed: () async {
                 Navigator.of(context).pop();
-                setState(() {
-                  _votes[index].count++;
-                  _votedUsers.add(user.uid); // Mark this user as voted
-                });
 
-                // Save the updated voted users to persistent storage or backend
+                try {
+                  final DocumentSnapshot electionDoc = await FirebaseFirestore
+                      .instance
+                      .collection('elections')
+                      .doc(widget.election.id)
+                      .get();
+                  final List<dynamic> candidates = electionDoc['candidates'];
+                  int candidateIndex =
+                      candidates.indexWhere((c) => c['id'] == candidate.id);
+
+                  if (candidateIndex != -1) {
+                    final int currentVotes =
+                        candidates[candidateIndex]['voteCount'] ?? 0;
+
+                    candidates[candidateIndex]['voteCount'] = currentVotes + 1;
+                    await FirebaseFirestore.instance
+                        .collection('elections')
+                        .doc(widget.election.id)
+                        .update({
+                      'candidates': candidates,
+                      'votedUsers': FieldValue.arrayUnion([user.uid]),
+                    });
+
+                    // Locally update the UI and add the user to the voted list
+                    setState(() {
+                      candidate.voteCount++; // Local increment
+                      _votedUsers.add(user.uid); // Mark this user as voted
+                    });
+
+                    WidgetsBinding.instance.addPostFrameCallback((_) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                            content: Text(
+                                'You voted for ${candidate.name} from ${candidate.party.name}!')),
+                      );
+                    });
+                  } else {
+                    WidgetsBinding.instance.addPostFrameCallback((_){
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text('Candidate not found!')),
+                      );
+                    });
+                  }
+                  // Update the candidate's vote count in Firestore
+                } catch (e) {
+                  print('Error voting: $e');
+                  WidgetsBinding.instance.addPostFrameCallback((_) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content: Text('An error occurred. Please try again.')),
+                    );
+                  });
+                }
               },
             ),
           ],
@@ -77,9 +139,13 @@ class _VotingScreenState extends State<VotingScreen> {
   }
 
   void _showResults() {
+    // Navigate to results screen and pass the election ID to fetch live data
     Navigator.of(context).push(
       MaterialPageRoute(
-        builder: (context) => ResultsScreen(votes: _votes),
+        builder: (context) => ResultsScreen(
+          election: widget.election,
+          electionId: widget.election.id,
+        ),
       ),
     );
   }
@@ -88,21 +154,22 @@ class _VotingScreenState extends State<VotingScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Vote Now'),
-        backgroundColor: Colors.teal,
+        title: Text('${widget.election.name} - Vote Now'),
+        backgroundColor: Colors.blue,
         actions: [
           IconButton(
-            icon: Icon(Icons.info_outline),
+            icon: const Icon(Icons.info_outline),
             onPressed: () {
               showDialog(
                 context: context,
                 builder: (BuildContext context) {
                   return AlertDialog(
-                    title: Text('Voting Instructions'),
-                    content: Text('Tap on a button to vote for an option. You can only vote once.'),
+                    title: const Text('Voting Instructions'),
+                    content: const Text(
+                        'Tap on a candidate to vote for them. You can only vote once.'),
                     actions: <Widget>[
                       TextButton(
-                        child: Text('OK'),
+                        child: const Text('OK'),
                         onPressed: () {
                           Navigator.of(context).pop();
                         },
@@ -116,35 +183,41 @@ class _VotingScreenState extends State<VotingScreen> {
         ],
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16.0),
         child: ListView.builder(
-          itemCount: _votes.length,
+          itemCount: widget.election.candidates.length,
           itemBuilder: (context, index) {
+            final candidate = widget.election.candidates[index];
             return Card(
               elevation: 5,
-              margin: EdgeInsets.symmetric(vertical: 8.0),
+              margin: const EdgeInsets.symmetric(vertical: 8.0),
               child: ListTile(
-                contentPadding: EdgeInsets.all(16.0),
+                contentPadding: const EdgeInsets.all(16.0),
                 leading: Icon(
-                  _votes[index].icon,
+                  Icons
+                      .person, // Customize with candidate-specific icons if needed
                   size: 40.0,
-                  color: Colors.teal,
+                  color: Colors.blue,
                 ),
                 title: Text(
-                  _votes[index].option,
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  candidate.name,
+                  style: const TextStyle(
+                      fontSize: 18, fontWeight: FontWeight.bold),
                 ),
+                subtitle: Text('Party: ${candidate.party.name}'),
                 trailing: ElevatedButton(
-                  onPressed: () => _vote(index),
-                  child: Text('Vote'),
+                  onPressed: () =>
+                      _vote(candidate), // Pass the Candidate object
                   style: ElevatedButton.styleFrom(
                     foregroundColor: Colors.white,
-                    backgroundColor: Colors.teal,
+                    backgroundColor: Colors.blue,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(12),
                     ),
-                    padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 16, vertical: 12),
                   ),
+                  child: const Text('Vote'),
                 ),
               ),
             );
@@ -153,8 +226,8 @@ class _VotingScreenState extends State<VotingScreen> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: _showResults,
-        child: Icon(Icons.bar_chart),
-        backgroundColor: Colors.teal,
+        backgroundColor: Colors.blue,
+        child: const Icon(Icons.bar_chart),
       ),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart'; // Import Firestore
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
@@ -10,14 +11,16 @@ class MyRegister extends StatefulWidget {
 
 class _MyRegisterState extends State<MyRegister> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance; // Firestore instance
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _nameController = TextEditingController();
+  bool _isAdmin = false; // Variable to track admin status
 
   void _registerUser() async {
     try {
       UserCredential userCredential =
-          await _auth.createUserWithEmailAndPassword(
+      await _auth.createUserWithEmailAndPassword(
         email: _emailController.text,
         password: _passwordController.text,
       );
@@ -25,6 +28,13 @@ class _MyRegisterState extends State<MyRegister> {
       // Optionally update the user profile with the display name
       if (userCredential.user != null) {
         await userCredential.user!.updateDisplayName(_nameController.text);
+
+        // Save the user information in Firestore
+        await _firestore.collection('users').doc(userCredential.user!.uid).set({
+          'name': _nameController.text,
+          'email': _emailController.text,
+          'isAdmin': _isAdmin, // Save admin status
+        });
       }
 
       // Registration successful, navigate to the login screen or home screen
@@ -57,12 +67,12 @@ class _MyRegisterState extends State<MyRegister> {
     return Container(
       decoration: const BoxDecoration(
         image: DecorationImage(
-          image: AssetImage('assets/register.png'),
+          image: AssetImage('assets/signUp3.png'),
           fit: BoxFit.cover,
         ),
       ),
       child: Scaffold(
-        backgroundColor: Colors.transparent,
+        backgroundColor: const Color.fromARGB(25, 250, 158, 190),
         appBar: AppBar(
           backgroundColor: Colors.transparent,
           elevation: 0,
@@ -73,7 +83,7 @@ class _MyRegisterState extends State<MyRegister> {
               padding: const EdgeInsets.only(left: 35, top: 30),
               child: const Text(
                 'Create\nAccount',
-                style: TextStyle(color: Colors.white, fontSize: 33),
+                style: TextStyle(color: Colors.black, fontSize: 33, fontFamily: 'Oswald'),
               ),
             ),
             SingleChildScrollView(
@@ -89,12 +99,14 @@ class _MyRegisterState extends State<MyRegister> {
                         children: [
                           TextField(
                             controller: _nameController,
-                            style: const TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.black),
                             decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide: const BorderSide(
-                                  color: Colors.white,
+                                  color: Colors.black,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
@@ -104,23 +116,23 @@ class _MyRegisterState extends State<MyRegister> {
                                 ),
                               ),
                               hintText: "Name",
-                              hintStyle: const TextStyle(color: Colors.white),
+                              hintStyle: const TextStyle(color: Colors.black),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
                           ),
-                          const SizedBox(
-                            height: 30,
-                          ),
+                          const SizedBox(height: 30),
                           TextField(
                             controller: _emailController,
-                            style: const TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.black),
                             decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide: const BorderSide(
-                                  color: Colors.white,
+                                  color: Colors.black,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
@@ -130,24 +142,24 @@ class _MyRegisterState extends State<MyRegister> {
                                 ),
                               ),
                               hintText: "Email",
-                              hintStyle: const TextStyle(color: Colors.white),
+                              hintStyle: const TextStyle(color: Colors.black),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
                           ),
-                          const SizedBox(
-                            height: 30,
-                          ),
+                          const SizedBox(height: 30),
                           TextField(
                             controller: _passwordController,
-                            style: const TextStyle(color: Colors.white),
+                            style: const TextStyle(color: Colors.black),
                             obscureText: true,
                             decoration: InputDecoration(
+                              filled: true,
+                              fillColor: Colors.white,
                               enabledBorder: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                                 borderSide: const BorderSide(
-                                  color: Colors.white,
+                                  color: Colors.black,
                                 ),
                               ),
                               focusedBorder: OutlineInputBorder(
@@ -157,29 +169,42 @@ class _MyRegisterState extends State<MyRegister> {
                                 ),
                               ),
                               hintText: "Password",
-                              hintStyle: const TextStyle(color: Colors.white),
+                              hintStyle: const TextStyle(color: Colors.black),
                               border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(10),
                               ),
                             ),
                           ),
-                          const SizedBox(
-                            height: 40,
+                          const SizedBox(height: 20),
+                          // Checkbox for Admin registration
+                          Row(
+                            children: [
+                              Checkbox(
+                                value: _isAdmin,
+                                onChanged: (value) {
+                                  setState(() {
+                                    _isAdmin = value ?? false; // Update admin status
+                                  });
+                                },
+                              ),
+                              const Text('Register as Admin')
+                            ],
                           ),
+                          const SizedBox(height: 40),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               const Text(
                                 'Sign Up',
                                 style: TextStyle(
-                                  color: Colors.white,
+                                  color: Colors.black,
                                   fontSize: 27,
                                   fontWeight: FontWeight.w700,
                                 ),
                               ),
                               CircleAvatar(
                                 radius: 30,
-                                backgroundColor: const Color(0xff4c505b),
+                                backgroundColor: Colors.blue,
                                 child: IconButton(
                                   color: Colors.white,
                                   onPressed: _registerUser,
@@ -188,24 +213,28 @@ class _MyRegisterState extends State<MyRegister> {
                               ),
                             ],
                           ),
-                          const SizedBox(
-                            height: 40,
-                          ),
+                          const SizedBox(height: 40),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              TextButton(
-                                onPressed: () {
-                                  Navigator.pushNamed(context, '/login');
-                                },
-                                style: const ButtonStyle(),
-                                child: const Text(
-                                  'Sign In',
-                                  textAlign: TextAlign.left,
-                                  style: TextStyle(
-                                    decoration: TextDecoration.underline,
-                                    color: Colors.white,
-                                    fontSize: 18,
+                              Container(
+                                decoration: BoxDecoration(
+                                  color: Colors.blueAccent,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: Colors.blueAccent, width: 2),
+                                ),
+                                child: TextButton(
+                                  onPressed: () {
+                                    Navigator.pushNamed(context, '/login');
+                                  },
+                                  style: const ButtonStyle(),
+                                  child: const Text(
+                                    'Sign In',
+                                    textAlign: TextAlign.left,
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 18,
+                                    ),
                                   ),
                                 ),
                               ),
