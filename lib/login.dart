@@ -192,8 +192,8 @@ class _MyLoginState extends State<MyLogin> {
                                 style: ElevatedButton.styleFrom(
                                   backgroundColor: Colors.lightBlue,
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 125,
-                                    vertical: 15,
+                                    horizontal: 80,
+                                    vertical: 10,
                                   ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10.0),
@@ -209,7 +209,7 @@ class _MyLoginState extends State<MyLogin> {
                               ),
                             ],
                           ),
-                          const SizedBox(height: 40),
+                          const SizedBox(height: 10),
 
                           // Sign Up and Forgot Password Buttons
                           Row(
@@ -220,11 +220,11 @@ class _MyLoginState extends State<MyLogin> {
                                   Navigator.pushNamed(context, "/register");
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  minimumSize: const Size(20, 14),
+                                  minimumSize: const Size(10, 14),
                                   backgroundColor: Colors.blue,
                                   padding: const EdgeInsets.symmetric(
                                     horizontal: 25,
-                                    vertical: 12,
+                                    vertical: 10,
                                   ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(10),
@@ -244,11 +244,11 @@ class _MyLoginState extends State<MyLogin> {
                                       context, '/forgot_password');
                                 },
                                 style: ElevatedButton.styleFrom(
-                                  minimumSize: const Size(20, 14),
+                                  minimumSize: const Size(20, 5),
                                   backgroundColor: Colors.blue,
                                   padding: const EdgeInsets.symmetric(
-                                    horizontal: 20,
-                                    vertical: 12,
+                                    horizontal: 10,
+                                    vertical: 10,
                                   ),
                                   shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(7),
