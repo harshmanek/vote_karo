@@ -52,6 +52,20 @@
 | Optional      | Firebase Hosting, Cloud Functions |
 
 ---
+### ScreenShots
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/9bc6461c-633d-43f2-a276-ce6c68906ef5" alt="Login Screen" width="250" height="500"/>
+  <img src="https://github.com/user-attachments/assets/42edd315-a4f8-4340-a601-75e535b98c20" alt="Register Screen" width="250" height="500"/>
+  <img src="https://github.com/user-attachments/assets/3d79ce7e-e226-4705-b4a6-1668916edce5" alt="Home Screen" width="250" height="500"/>
+</p>
+
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/bbddce95-2f2b-431b-93bb-9d7e974e6a04" alt="Voting Screen" width="250" height="500"/>
+  <img src="https://github.com/user-attachments/assets/c3c96aa6-43c0-4c8b-b327-cd0785d956be" alt="Result Screen" width="250" height="500"/>
+  <img src="https://github.com/user-attachments/assets/314fdd96-8d8d-426f-8f37-0d8636989e31" alt="Admin Panel" width="250" height="500"/>
+</p>
+
+---
 
 ## 🔧 Getting Started
 
