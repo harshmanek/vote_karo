@@ -52,7 +52,7 @@
 | Optional      | Firebase Hosting, Cloud Functions |
 
 ---
-### ScreenShots
+### 📸ScreenShots
 <p align="center">
   <img src="https://github.com/user-attachments/assets/9bc6461c-633d-43f2-a276-ce6c68906ef5" alt="Login Screen" width="250" height="500"/>
   <img src="https://github.com/user-attachments/assets/42edd315-a4f8-4340-a601-75e535b98c20" alt="Register Screen" width="250" height="500"/>
